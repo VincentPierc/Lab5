@@ -26,35 +26,21 @@ class CourseSection {
         if (!(other instanceof CourseSection)) { // check type
             return false;
         }
-
         CourseSection o = (CourseSection) other;
-        if ((o.prefix == null && this.prefix != null) || (o.prefix != null && this.prefix == null)) { // check prefix field
-            return false;
-        }
-        if (this.prefix != null && o.prefix != null) {
-            if (this.prefix.length() != o.prefix.length()) {
+        if ((o.prefix == null && this.prefix != null) || (o.prefix != null && this.prefix == null)) { return false; }
+        if (o.prefix != null && this.prefix != null) {
+            if (!(o.prefix == this.prefix)) {
                 return false;
-            }
-            for (int i = 0; i < this.prefix.length(); i++) {
-                if (this.prefix.charAt(i) != o.prefix.charAt(i)) {
-                    return false;
-                }
             }
         }
 
-        if ((o.number == null && this.number != null) || (o.number != null && this.number == null)) {   // check number field
-            return false;
-        }
-        if (this.number != null && o.number != null) {
-            if (this.number.length() != o.number.length()) {
+        if ((o.number == null && this.number != null) || (o.number != null && this.number == null)) { return false; }
+        if (o.number != null && this.number != null) {
+            if (!(o.number == this.number)) {
                 return false;
             }
-            for (int i = 0; i < this.number.length(); i++) {
-                if (this.number.charAt(i) != o.number.charAt(i)) {
-                    return false;
-                }
-            }
         }
+
         if (!(this.enrollment == o.enrollment)) {       // check enrollment field
             return false;
         }
@@ -62,16 +48,17 @@ class CourseSection {
         if ((o.startTime == null && this.startTime != null) || (o.startTime != null && this.startTime == null)) {  // check startTime field
             return false;
         }
-        if (o.startTime == null && this.startTime == null) {        //TODO replace equals
-            if (!(o.startTime.equals(this.startTime))) {
+        if (o.startTime != null && this.startTime != null) {
+            if(o.startTime.toNanoOfDay()  != this.startTime.toNanoOfDay()) {
                 return false;
             }
         }
+
         if ((o.endTime == null && this.endTime != null) || (o.endTime != null && this.endTime == null)) {   // check endTime field
             return false;
         }
-        if(o.endTime == null && this.endTime == null) {
-            if (!(o.endTime.equals(this.endTime))) {                //TODO replace equals
+        if(o.endTime != null && this.endTime != null) {
+            if(!(o.endTime.toNanoOfDay() == this.endTime.toNanoOfDay())) {
                 return false;
             }
         }
@@ -79,5 +66,16 @@ class CourseSection {
     }
 
     @Override public int hashCode() {
+        int hashCode = 0;
+        for(char ch : this.prefix.toCharArray()) {
+            hashCode += Math.pow((int)ch*3, 2);
+        }
+        for(char ch : this.number.toCharArray()) {
+            hashCode += Math.pow((int)ch*2, 3);
+        }
+        hashCode = hashCode % enrollment;
+        hashCode += this.startTime.toNanoOfDay();
+        hashCode += this.endTime.toNanoOfDay();
+        return hashCode;
     }
 }
